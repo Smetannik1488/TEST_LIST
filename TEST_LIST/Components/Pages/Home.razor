@@ -1,0 +1,100 @@
+﻿@page "/"
+@rendermode InteractiveServer
+@using TEST_LIST.Components
+<PageTitle>List</PageTitle>
+
+<h1>Task list</h1>
+
+<div class="task-list">
+
+    <select class="TT" @bind="selectedFilter">
+        <option value="All">All tasks</option>
+        <option value="Completed">Completed</option>
+        <option value="Active">Not completed</option>
+    </select>
+
+    <!-- Строка ввода и кнопка -->
+    <div class="Add">
+        <input type="text" @bind="newTaskTitle" placeholder="Enter the task" />
+        <button class="S" @onclick="AddTask">Add</button>
+    </div>
+
+    @* <!-- Статичные задачи -->
+    <div class="form-row">
+        <div class="left-group">
+            <input type="checkbox">
+            <label>New Task</label>
+        </div>
+        <button>
+            <img src="images/icon.png" alt="Иконка" class="icon">
+        </button>
+    </div>
+
+    <div class="form-row">
+        <div class="left-group">
+            <input type="checkbox">
+            <label>New Task</label>
+        </div>
+        <button>
+            <img src="images/icon.png" alt="Иконка" class="icon">
+        </button>
+    </div>
+
+    <div class="form-row">
+        <div class="left-group">
+            <input type="checkbox">
+            <label>New Task</label>
+        </div>
+        <button>
+            <img src="images/icon.png" alt="Иконка" class="icon">
+        </button>
+    </div> *@
+
+    @foreach (var task in FilteredTasks)
+    {
+        <div class="form-row" @key="task">
+            <div class="left-group">
+                <input type="checkbox" @bind="task.IsCompleted" />
+                <label>@task.Title</label>
+            </div>
+            <button @onclick="() => RemoveTask(task)">
+                <img src="images/icon.png" alt="Иконка" class="icon" />
+            </button>
+        </div>
+    }
+    </div>
+     
+@code{
+    public class TaskItem
+    {
+        public string Title { get; set; }
+        public bool IsCompleted { get; set; }
+    }
+
+    private List<TaskItem> tasks = new();
+    private string newTaskTitle = "";
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTaskTitle))
+        {
+            tasks.Add(new TaskItem { Title = newTaskTitle, IsCompleted = false });
+            newTaskTitle = "";
+            StateHasChanged(); 
+        }
+    }
+
+    private void RemoveTask(TaskItem task)
+    {
+        tasks.Remove(task);
+    }
+
+    private string selectedFilter = "All";
+
+    private IEnumerable<TaskItem> FilteredTasks => selectedFilter switch
+    {
+        "Completed" => tasks.Where(t => t.IsCompleted),
+        "Active" => tasks.Where(t => !t.IsCompleted),
+        _ => tasks
+    };
+}

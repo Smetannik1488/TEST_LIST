@@ -1,0 +1,40 @@
+﻿@page "/tasklist"
+
+<h3>Task List</h3>
+
+<input type="text" @bind="newTaskTitle" placeholder="Введите задачу" />
+<button @onclick="AddTask">Добавить</button>
+
+@foreach (var task in tasks)
+{
+    <div>
+        <input type="checkbox" @bind="task.IsCompleted" />
+        <span>@task.Title</span>
+        <button @onclick="() => RemoveTask(task)">Удалить</button>
+    </div>
+}
+
+@code {
+    public class TaskItem
+    {
+        public string Title { get; set; }
+        public bool IsCompleted { get; set; }
+    }
+
+    private List<TaskItem> tasks = new();
+    private string newTaskTitle = "";
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTaskTitle))
+        {
+            tasks.Add(new TaskItem { Title = newTaskTitle });
+            newTaskTitle = "";
+        }
+    }
+
+    private void RemoveTask(TaskItem task)
+    {
+        tasks.Remove(task);
+    }
+}
